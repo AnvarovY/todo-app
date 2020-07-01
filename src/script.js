@@ -63,17 +63,19 @@ function render(highlight, type) {
 function init() { 
     render();
     let type;
+    let search;
 
     for (const radio of document.querySelectorAll('.radioBut')) {
         radio.addEventListener('change', () => {
             type = radio.value;
-            render('', type);
+            render(search, type);
         })
     }
 
     document.querySelector('.searchStr')
         .addEventListener('input', (e) => {
             if (e.target.value.length !== 0) {
+                search = e.target.value
                 render(e.target.value, type);
             }
             else {
@@ -98,7 +100,7 @@ function init() {
             fs.writeFileSync(dataPatch, JSON.stringify(data));
             render();
     })
-    
+
     document.querySelector('.check')
         .addEventListener('click', () => {
             
