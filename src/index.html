@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Todos!</title>
+    <link rel="stylesheet" href="index.css">
+  </head>
+  <body>
+    <h1><b>Список дел</b></h1>
+    <div class="search"><input class="searchStr" type="search" name="searchStr" placeholder="Поиск"></div>
+    <div class="addTodo"><input class="check" type="checkbox"><input class="strTodo" name="strTodo" placeholder="Добавить дело" value=""></div>
+    <div class="list">
+      <div class="todo">
+        <div class="box1"><input class="checkbox" type="checkbox" checked></div>
+        <div class="box2"> 1. Посмотреть ТВ </div>
+        <div class="box3"><input class="removeBut" type="button" value="❌"></div>
+      </div>
+      <div class="todo">
+        <div class="box1"><input class="checkbox" type="checkbox"></div>
+        <div class="box2"> 2. Покормить кота </div>
+        <div class="box3"><input class="removeBut" type="button" value="❌"></div>
+      </div>
+      <div class="todo">
+        <div class="box1"><input class="checkbox" type="checkbox"></div>
+        <div class="box2"> 3. Поиграть в компьютер </div>
+        <div class="box3"><input class="removeBut" type="button" value="❌"></div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="left"><b>2 дела осталось</b></div>
+      <div class="filter" title="Какие задачи отобразить?">
+        <input class="radioBut" type="radio" checked name="radioBut" value="a1">Все
+        <input class="radioBut" type="radio" name="radioBut" value="a2">Активные
+        <input class="radioBut" type="radio" name="radioBut" value="a3">Завершённые
+      </div>
+      <div class="remove"><input style='visibility: visible' type="button" value="Удалить завершенные"></div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
