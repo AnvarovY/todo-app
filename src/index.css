@@ -69,6 +69,7 @@ h1 {
 .removeBut {
 border: none;
 background-color: transparent;
+cursor: pointer;
 }
 
 .filter {

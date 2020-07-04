@@ -6,54 +6,63 @@ const dataPatch = path.join(__dirname, 'data.json');
 let data = JSON.parse(fs.readFileSync(dataPatch));
 
 function render(highlight, type) {
-    function filtertodo(todo, type) {
-        return (type === "a1" || !type) || (type === "a3" && todo.completed) || (type === "a2" && !todo.completed);
+    function filtertodo(todo, index, type) {
+        return (type === "a1" || !type) || (type === "a3" && data[index].completed) || (type === "a2" && !data[index].completed);
     }
     document.querySelector('.list').innerHTML = data
-    .filter(x => filtertodo(x, type))
     .map(function(item, index) {
         let checked1 = item.completed ? 'checked' : '';
         if (highlight && item.title.toLowerCase().includes(highlight.toLowerCase())) {
-            return `<div class="todo"><div class="box1"><input class="checkbox" type="checkbox" ${checked1}></div><div class="box2">${(index + 1)} ${item.title} </div><div class="box3"><input class="removeBut" type="button" value="❌"></div></div>`
+            return `<div class="todo"><div class="box1"><input class="checkbox" id="check${index}" type="checkbox" ${checked1}></div><div class="box2"><label for="check${index}">${(index + 1)} ${item.title}</label></div><div class="box3"><input class="removeBut" type="button" value="❌"></div></div>`
             .replace(new RegExp(highlight, 'gi'), (match) => `<span style="color: red;">${match}</span>`)
         } else if (!highlight) { 
-            return `<div class="todo"><div class="box1"><input class="checkbox" type="checkbox" ${checked1}></div><div class="box2">${(index + 1)} ${item.title} </div><div class="box3"><input class="removeBut" type="button" value="❌"></div></div>`
+            return `<div class="todo"><div class="box1"><input class="checkbox" id="check${index}" type="checkbox" ${checked1}></div><div class="box2"><label for="check${index}">${(index + 1)} ${item.title}</label></div><div class="box3"><input class="removeBut" type="button" value="❌"></div></div>`
         }
     })
+    .filter((todo, index) => filtertodo(todo, index, type))
     .join('');
 
+    const todolist = document.querySelectorAll('.box2');
     const toggleTodo = document.querySelectorAll('.checkbox');
+    const removeTodo = document.querySelectorAll('.removeBut');
+
     for (let i = 0; i < toggleTodo.length; ++i) {
         const checkbuton = toggleTodo[i];
         checkbuton.addEventListener('change', () => {
-            if (data[i].completed) {
-                data[i].completed = false;
+            const num =  data.findIndex(x => x.title === todolist[i].innerText.replace(/^\d+\s+/gi, ''))
+            //const num = data.indexOf(todolist[i].innerText);
+            if (data[num].completed) {
+                data[num].completed = false;
             }
             else {
-                data[i].completed = true;
+                data[num].completed = true;
             }
             fs.writeFileSync(dataPatch, JSON.stringify(data));
-            render();
+            render(highlight, type);
         });  
     }  
 
-    const removeTodo = document.querySelectorAll('.removeBut');
     for (let i = 0; i < removeTodo.length; ++i) {
         const removeBut = removeTodo[i];
         removeBut.addEventListener('click', () => {
-            data.splice(i, 1);
+            data.splice(data.indexOf(todolist[i].innerText.replace(/^\d+\s+/gi, '')), 1);
             fs.writeFileSync(dataPatch, JSON.stringify(data));
-            render();
+            render(highlight, type);
         });  
     }  
 
-    const leftTodo = document.querySelectorAll('.checkbox:checked');
-    document.querySelector('.left').innerHTML = ('<div class="left"><b> Дел осталось: ' + leftTodo.length + '</b></div>');
+    let leftTodo = 0;
+    for (let i = 0; i < data.length; ++i) {
+        if (data[i].completed) {
+            ++leftTodo;
+        }
+    }
+    document.querySelector('.left').innerHTML = ('<div class="left"><b> Дел осталось: ' + (data.length - leftTodo) + '</b></div>');
 
-    document.querySelector('.remove').innerHTML = leftTodo.length === 0 ? ('<div><input class="remove" style="visibility: hidden" type="button" value="Удалить завершенные"></div>'):
+    document.querySelector('.remove').innerHTML = leftTodo === 0 ? ('<div><input class="remove" style="visibility: hidden" type="button" value="Удалить завершенные"></div>'):
     ('<div><input class="remove" style="visibility: visible" type="button" value="Удалить завершенные"></div>');
 
-    if (leftTodo.length === data.length) {
+    if (leftTodo === data.length) {
         document.querySelector('.check').checked = true; 
     } else {
         document.querySelector('.check').checked = false; 
@@ -75,10 +84,11 @@ function init() {
     document.querySelector('.searchStr')
         .addEventListener('input', (e) => {
             if (e.target.value.length !== 0) {
-                search = e.target.value
-                render(e.target.value, type);
+                search = e.target.value;
+                render(search, type);
             }
             else {
+                search = '';
                 render('', type);                
             }
     })
@@ -89,7 +99,7 @@ function init() {
                 data.push({"title" : e.target.value,"completed":false});
                 fs.writeFileSync(dataPatch, JSON.stringify(data));
                 e.target.value = '';
-                render();
+                render(search, type);
             }
     })
     
@@ -98,7 +108,7 @@ function init() {
             let newData = data.filter(x => !x.completed);
             data = newData;
             fs.writeFileSync(dataPatch, JSON.stringify(data));
-            render();
+            render(search, type);
     })
 
     document.querySelector('.check')
@@ -113,7 +123,7 @@ function init() {
             } 
 
             fs.writeFileSync(dataPatch, JSON.stringify(data));
-            render();
+            render(search, type);
     })
 }
 
