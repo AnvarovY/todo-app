@@ -29,7 +29,7 @@ function render(highlight, type) {
     for (let i = 0; i < toggleTodo.length; ++i) {
         const checkbuton = toggleTodo[i];
         checkbuton.addEventListener('change', () => {
-            const num =  data.findIndex(x => x.title === todolist[i].innerText.replace(/^\d+\s+/gi, ''))
+            const num =  parseInt(todolist[i].innerText, 10) - 1;
             //const num = data.indexOf(todolist[i].innerText);
             if (data[num].completed) {
                 data[num].completed = false;
@@ -45,7 +45,7 @@ function render(highlight, type) {
     for (let i = 0; i < removeTodo.length; ++i) {
         const removeBut = removeTodo[i];
         removeBut.addEventListener('click', () => {
-            data.splice(data.indexOf(todolist[i].innerText.replace(/^\d+\s+/gi, '')), 1);
+            data.splice((parseInt(todolist[i].innerText, 10) - 1), 1);
             fs.writeFileSync(dataPatch, JSON.stringify(data));
             render(highlight, type);
         });  
