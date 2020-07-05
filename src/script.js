@@ -30,7 +30,6 @@ function render(highlight, type) {
         const checkbuton = toggleTodo[i];
         checkbuton.addEventListener('change', () => {
             const num =  parseInt(todolist[i].innerText, 10) - 1;
-            //const num = data.indexOf(todolist[i].innerText);
             if (data[num].completed) {
                 data[num].completed = false;
             }
